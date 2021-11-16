@@ -34,7 +34,7 @@ fastify.get("/", async (request, reply) => {
 });
 
 fastify.post("/", async (request, reply) => {
-  request.log.info(request.body.url);
+  request.log.info(request.body);
   gotScraping({
     url: request.body.url,
     headerGeneratorOptions: {
