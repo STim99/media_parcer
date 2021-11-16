@@ -9,7 +9,7 @@ import fastifyStatic from "fastify-static";
 import pov from "point-of-view";
 import ejs from "ejs";
 
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({ logger: true, pluginTimeout: 2000 });
 const PORT = process.env.PORT ?? 3000;
 
 fastify.register(formBodyPlugin);
@@ -29,7 +29,7 @@ fastify.get("/", async (request, reply) => {
 });
 
 fastify.post("/", async (request, reply) => {
-  request.log.info("URL", request.body.url);
+  request.log.info(request.body.url);
   gotScraping({
     url: request.body.url,
     headerGeneratorOptions: {
