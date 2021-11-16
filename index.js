@@ -7,6 +7,7 @@ import Fastify from "fastify";
 import formBodyPlugin from "fastify-formbody";
 import fastifyStatic from "fastify-static";
 import pov from "point-of-view";
+import fastifyCors from "fastify-cors";
 import ejs from "ejs";
 
 const fastify = Fastify({ logger: true, pluginTimeout: 2000 });
@@ -16,6 +17,10 @@ fastify.register(formBodyPlugin);
 fastify.register(fastifyStatic, {
   root: resolve("./public"),
   prefix: "/public/", // optional: default '/'
+});
+fastify.register(fastifyCors, {
+  origin: "*",
+  methods: ["POST"],
 });
 
 fastify.register(pov, {
