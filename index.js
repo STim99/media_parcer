@@ -16,7 +16,7 @@ const PORT = process.env.PORT ?? 3000;
 fastify.register(formBodyPlugin);
 fastify.register(fastifyStatic, {
   root: resolve("./public"),
-  prefix: "/public/", // optional: default '/'
+  prefix: "/public/",
 });
 fastify.register(fastifyCors, {
   origin: "*",
@@ -54,16 +54,19 @@ fastify.post("/", async (request, reply) => {
     },
   })
     .then((response) => {
+      request.log.info({ statusCode: response.statusCode, url: response.url });
       const url = [];
-      response.body
-        .match(/\[(2|3).+mp4/gi)[0]
-        .split(/,| or /)
-        .forEach((link) => {
+      const media = response.body.match(/\[(2|3).+mp4/gi)[0];
+      if (media) {
+        media.split(/,| or /).forEach((link) => {
           if (/^http/i.test(link)) {
             url.push(normalizeUrl(new URL(link).href));
           }
         });
-      return reply.view("/templates/index.min.ejs", { url });
+        return reply.view("/templates/index.min.ejs", { url });
+      } else {
+        return reply.status(500).send("Media is not found");
+      }
     })
     .catch(function (e) {
       request.log.error(e);
