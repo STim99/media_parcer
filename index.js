@@ -55,8 +55,9 @@ fastify.post("/", async (request, reply) => {
   })
     .then((response) => {
       request.log.info({ statusCode: response.statusCode, url: response.url });
+      request.log.info({ body: response.body });
       const url = [];
-      const media = response.body.match(/\[(2|3).+mp4/gi)[0];
+      const media = response.body.match(/\[(2|3).+mp4/gi)?.[0];
       if (media) {
         media.split(/,| or /).forEach((link) => {
           if (/^http/i.test(link)) {
