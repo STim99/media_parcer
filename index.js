@@ -33,7 +33,7 @@ fastify.get("/", async (request, reply) => {
   return reply.sendFile("index.min.html");
 });
 
-fastify.post("/", async (request, reply) => {
+fastify.post("/api", async (request, reply) => {
   request.log.info(request.body);
   gotScraping({
     url: request.body.url,
