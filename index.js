@@ -7,10 +7,10 @@ import Fastify from "fastify";
 import formBodyPlugin from "fastify-formbody";
 import fastifyStatic from "fastify-static";
 import pov from "point-of-view";
-import fastifyCors from "fastify-cors";
+// import fastifyCors from "fastify-cors";
 import ejs from "ejs";
 
-const fastify = Fastify({ logger: true, pluginTimeout: 2000 });
+const fastify = Fastify({ logger: true });
 const PORT = process.env.PORT ?? 3000;
 
 fastify.register(formBodyPlugin);
@@ -18,10 +18,10 @@ fastify.register(fastifyStatic, {
   root: resolve("./public"),
   prefix: "/public/",
 });
-fastify.register(fastifyCors, {
-  origin: "*",
-  methods: ["POST"],
-});
+// fastify.register(fastifyCors, {
+//   origin: "*",
+//   methods: ["POST"],
+// });
 
 fastify.register(pov, {
   engine: {
@@ -34,7 +34,7 @@ fastify.get("/", async (request, reply) => {
 });
 
 fastify.post("/api", async (request, reply) => {
-  request.log.info(request.body);
+  // request.log.info(request.body);
   gotScraping({
     url: request.body.url,
     headerGeneratorOptions: {
@@ -55,7 +55,7 @@ fastify.post("/api", async (request, reply) => {
   })
     .then((response) => {
       request.log.info({ statusCode: response.statusCode, url: response.url });
-      request.log.info({ body: response.body });
+      // request.log.info({ body: response.body });
       const url = [];
       const media = response.body.match(/\[(2|3).+mp4/gi)?.[0];
       if (media) {
