@@ -1,7 +1,5 @@
-import { Buffer } from "buffer";
 import { gotScraping } from "got-scraping";
 import { resolve } from "path";
-
 import normalizeUrl from "normalize-url";
 import Fastify from "fastify";
 
@@ -14,14 +12,20 @@ import ejs from "ejs";
 const fastify = Fastify({ logger: true });
 const PORT = process.env.PORT ?? 3000;
 
+function btoa(str) {
+  return Buffer.from(str, "binary").toString("base64");
+}
+function atob(str) {
+  return Buffer.from(str, "base64").toString("binary");
+}
+
 function decode(b) {
   function c(a) {
-    return Buffer.from(a.toString("base64"));
+    return btoa(a);
   }
   function d(a) {
     return decodeURIComponent(
-      Buffer.from(a, "base64")
-        .toString("binary")
+      atob(a)
         .split("")
         .map(function (a) {
           return "%" + ("00" + a.charCodeAt(0).toString(16)).slice(-2);
@@ -98,9 +102,9 @@ fastify.post("/api", async (request, reply) => {
       const url = [];
       const findHash = response.body
         .match(/"streams":"#[a-zA-Z0-9\\/_=]*"/gi)?.[0]
-        .replace(/\\/g, "")
+        .replaceAll(/\\/g, "")
         .split('"')?.[3];
-      const media = decode(findHash);
+      const media = findHash ? decode(findHash) : "";
       if (media) {
         const links = media.split(/,| or /);
         for (const link of links) {
